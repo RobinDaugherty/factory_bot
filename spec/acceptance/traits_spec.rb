@@ -798,3 +798,21 @@ describe "traits used in associations" do
     expect(creator.name).to eq "Joe Creator"
   end
 end
+
+describe "when a self-referential trait is defined" do
+  it "raises a TraitDefinitionError" do
+    define_model("User", name: :string)
+    expect do
+      FactoryBot.define do
+        factory :user do
+          trait :admin do
+            admin
+          end
+        end
+      end
+    end.to raise_error(
+      FactoryBot::TraitDefinitionError,
+      "Self-referencing trait 'admin'",
+    )
+  end
+end
